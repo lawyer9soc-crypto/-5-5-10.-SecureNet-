@@ -1,0 +1,43 @@
+@startuml
+title SecureNet — разбор предупреждений безопасности
+top to bottom direction
+skinparam classAttributeIconSize 0
+
+class "Оператор SecureNet" as Operator {
+    -id : Integer
+    -name : String
+    +viewAlerts() : List<Alert>
+}
+
+class "Аналитик безопасности" as Analyst {
+    +review(alert : Alert) : ReviewResult
+}
+
+class "Предупреждение" as Alert {
+    -id : Integer
+    -description : String
+    -status : String
+}
+
+class "Результат разбора" as ReviewResult {
+    -threatConfirmed : Boolean
+    -comment : String
+    -reviewedAt : DateTime
+}
+
+class "Инцидент" as Incident {
+    -id : Integer
+    -status : String
+    -createdAt : DateTime
+}
+
+Operator <|-- Analyst
+Analyst "0..1" -- "0..*" Alert : разбирает
+Alert "1" -- "0..1" ReviewResult : имеет результат
+ReviewResult "1" -- "0..1" Incident : служит основанием
+
+note bottom of Incident
+  Создаётся только при
+  подтверждённой угрозе.
+end note
+@enduml
